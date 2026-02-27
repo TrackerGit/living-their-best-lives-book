@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bichons Living Their Best Lives — A Visual Celebration of Canine Excellence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Lora:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --cream: #EFE9E0;
+            --charcoal: #2E2E2E;
+            --gold: #C9A96E;
+            --dark-text: #2B2B2B;
+            --light-text: #F5F1E8;
+            --taupe: #A9A090;
+            --radius: 14px;
+            --radius-sm: 10px;
+            --radius-lg: 18px;
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            color: var(--dark-text);
+            background-color: var(--cream);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--charcoal);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            list-style: none;
+            flex-wrap: wrap;
+            font-family: 'Inter', sans-serif;
+        }
+
+        nav a {
+            color: var(--light-text);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 0.25rem;
+        }
+
+        nav a:hover {
+            color: var(--gold);
+            border-bottom-color: var(--gold);
+        }
+
+        /* Hero Section — Side by side on desktop */
+        .hero {
+            background-color: var(--charcoal);
+            color: var(--light-text);
+            padding: 4rem 2rem;
+            position: relative;
+            overflow: hidden;
+            min-height: 90vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(201, 169, 110, 0.1) 0%, rgba(169, 160, 144, 0.05) 100%);
+            pointer-events: none;
+        }
+
+        .hero-layout {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+            max-width: 1100px;
+            width: 100%;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero-text {
+            flex: 1;
+            text-align: left;
+        }
+
+        .hero-image-wrapper {
+            flex: 0 0 auto;
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        .hero h1 {
+            font-family: 'Italiana', serif;
+            font-size: clamp(3rem, 7vw, 5rem);
+            color: var(--gold);
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.05em;
+            line-height: 1.1;
+        }
+
+        .hero .subtitle {
+            font-family: 'Italiana', serif;
+            font-size: clamp(1.3rem, 3.5vw, 2.2rem);
+            color: var(--cream);
+            margin-bottom: 0.8rem;
+            font-weight: 400;
+        }
+
+        .hero .tagline {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(0.85rem, 1.5vw, 1.05rem);
+            color: var(--taupe);
+            margin-bottom: 2rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .hero-image {
+            width: 380px;
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 16px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .cta-primary {
+            display: inline-block;
+            background-color: var(--gold);
+            color: var(--charcoal);
+            padding: 1rem 2.5rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: all 0.3s ease;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .cta-primary:hover {
+            background-color: var(--cream);
+            color: var(--charcoal);
+            box-shadow: 0 8px 25px rgba(201, 169, 110, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .hero-details {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: var(--taupe);
+            margin-top: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Gallery Section */
+        .gallery {
+            background-color: var(--cream);
+            padding: 4rem 2rem;
+        }
+
+        .section-title {
+            font-family: 'Italiana', serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            text-align: center;
+            color: var(--gold);
+            margin-bottom: 3rem;
+            letter-spacing: 0.05em;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 1;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(46, 46, 46, 0.85) 100%);
+            color: var(--light-text);
+            padding: 1.5rem 1rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            border-radius: 0 0 var(--radius) var(--radius);
+        }
+
+        .gallery-item:hover .gallery-caption {
+            transform: translateY(0);
+        }
+
+        /* About Section */
+        .about {
+            background-color: var(--cream);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about h2 {
+            font-family: 'Italiana', serif;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            color: var(--gold);
+            margin-bottom: 1.5rem;
+        }
+
+        .about p {
+            font-size: clamp(1rem, 2vw, 1.15rem);
+            line-height: 1.8;
+            color: var(--dark-text);
+            margin-bottom: 1.5rem;
+        }
+
+        .about .publisher {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: var(--taupe);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            margin-top: 2rem;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            background-color: var(--charcoal);
+            color: var(--light-text);
+            padding: 4rem 2rem;
+        }
+
+        .pricing .section-title {
+            color: var(--gold);
+            margin-bottom: 3rem;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border: 1px solid var(--gold);
+            border-radius: var(--radius);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .pricing-card:hover {
+            background-color: rgba(201, 169, 110, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(201, 169, 110, 0.2);
+        }
+
+        .pricing-card h3 {
+            font-family: 'Italiana', serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+        }
+
+        .price {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(1.5rem, 3vw, 2.2rem);
+            color: var(--light-text);
+            margin: 1rem 0;
+            font-weight: 700;
+        }
+
+        .price-option {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: var(--taupe);
+            margin: 0.5rem 0;
+        }
+
+        .pricing-description {
+            font-family: 'Lora', serif;
+            font-size: 0.95rem;
+            color: var(--cream);
+            margin: 1.5rem 0;
+            line-height: 1.6;
+        }
+
+        .cta-secondary {
+            display: inline-block;
+            background-color: var(--gold);
+            color: var(--charcoal);
+            padding: 0.8rem 2rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: all 0.3s ease;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-top: 1.5rem;
+        }
+
+        .cta-secondary:hover {
+            background-color: var(--cream);
+            color: var(--charcoal);
+            box-shadow: 0 6px 20px rgba(201, 169, 110, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Custom Edition Teaser */
+        .custom-teaser {
+            background-color: var(--charcoal);
+            color: var(--light-text);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .custom-teaser h2 {
+            font-family: 'Italiana', serif;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            color: var(--gold);
+            margin-bottom: 1rem;
+        }
+
+        .custom-teaser p {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--cream);
+            margin-bottom: 1.5rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .coming-soon {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            color: var(--gold);
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+
+        .email-signup {
+            display: flex;
+            gap: 0.5rem;
+            max-width: 400px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .email-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.9rem 1rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            background-color: var(--cream);
+            color: var(--dark-text);
+            border: none;
+            border-radius: var(--radius-sm);
+        }
+
+        .email-input::placeholder {
+            color: var(--taupe);
+        }
+
+        .email-submit {
+            padding: 0.9rem 1.5rem;
+            background-color: var(--gold);
+            color: var(--charcoal);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-radius: var(--radius-sm);
+        }
+
+        .email-submit:hover {
+            background-color: var(--cream);
+            transform: translateY(-2px);
+        }
+
+        /* Volume 2 Teaser */
+        .volume-teaser {
+            background-color: var(--cream);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .volume-teaser h2 {
+            font-family: 'Italiana', serif;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            color: var(--gold);
+            margin-bottom: 1rem;
+        }
+
+        .volume-teaser p {
+            font-size: 1.1rem;
+            color: var(--dark-text);
+            line-height: 1.7;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--charcoal);
+            color: var(--light-text);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .footer-publisher {
+            font-family: 'Italiana', serif;
+            font-size: 1.3rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+        }
+
+        .footer-email {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-email a {
+            color: var(--gold);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-email a:hover {
+            color: var(--cream);
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-icon {
+            display: inline-flex;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--gold);
+            color: var(--charcoal);
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background-color: var(--cream);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav ul {
+                gap: 1rem;
+            }
+
+            nav a {
+                font-size: 0.85rem;
+            }
+
+            .hero {
+                padding: 2.5rem 1.5rem;
+                min-height: auto;
+            }
+
+            .hero-layout {
+                flex-direction: column;
+                text-align: center;
+                gap: 2rem;
+            }
+
+            .hero-text {
+                text-align: center;
+            }
+
+            .hero-image {
+                width: 300px;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .email-signup {
+                flex-direction: column;
+            }
+
+            .email-input,
+            .email-submit {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                margin-bottom: 0.25rem;
+            }
+
+            .hero .subtitle {
+                margin-bottom: 0.5rem;
+            }
+
+            nav {
+                padding: 0.8rem 1rem;
+            }
+
+            nav ul {
+                gap: 0.8rem;
+                flex-direction: column;
+            }
+
+            nav a {
+                font-size: 0.75rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero-image {
+                width: 260px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#gallery">Preview</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#custom">Custom</a></li>
+            <li><a href="#volume2">Volume 2</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-layout">
+            <div class="hero-text">
+                <h1>BICHONS</h1>
+                <div class="subtitle">Living Their Best Lives</div>
+                <div class="tagline">A Visual Celebration of Canine Excellence</div>
+                <a href="#pricing" class="cta-primary">Order Your Copy</a>
+                <div class="hero-details">
+                    25 images &middot; 5 chapters &middot; Premium print or digital
+                </div>
+            </div>
+            <div class="hero-image-wrapper">
+                <img src="images/001_Mountain_Summit_Explorer.jpg" alt="Bichon at Mountain Summit" class="hero-image">
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery fade-in-on-scroll">
+        <h2 class="section-title">Preview the Collection</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="images/012_Samurai_Warrior_Red_Sun.jpg" alt="Samurai Warrior">
+                <div class="gallery-caption">Honour your hustle. Unsheathe your potential.</div>
+            </div>
+            <div class="gallery-item">
+                <img src="images/004_Coffee_Barista_Latte_Art.jpg" alt="Coffee Barista">
+                <div class="gallery-caption">Your oat milk flat white with a side of judgement.</div>
+            </div>
+            <div class="gallery-item">
+                <img src="images/015_Boxing_Red_Gloves.jpg" alt="Boxing Champion">
+                <div class="gallery-caption">Float like a butterfly. Fluff like a Bichon.</div>
+            </div>
+            <div class="gallery-item">
+                <img src="images/022_Private_Jet_Luxury.jpg" alt="Private Jet">
+                <div class="gallery-caption">First class. No questions. No checked baggage.</div>
+            </div>
+            <div class="gallery-item">
+                <img src="images/020_Spa_Day_Cucumber_Mask.jpg" alt="Spa Day">
+                <div class="gallery-caption">Refreshed. Restored. Still judging.</div>
+            </div>
+            <div class="gallery-item">
+                <img src="images/025_Cyberpunk_Tokyo_Neon_Street.jpg" alt="Cyberpunk Tokyo">
+                <div class="gallery-caption">Neon dreams in a fur coat.</div>
+            </div>
+            <div class="gallery-item">
+                <img src="images/018_Camping_Campfire_Marshmallow.jpg" alt="Camping">
+                <div class="gallery-caption">S'mores for the soul.</div>
+            </div>
+            <div class="gallery-item">
+                <img src="images/005_Surfing_Ocean_Wave.jpg" alt="Surfing">
+                <div class="gallery-caption">Surf's up. Motivation's permanent.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about fade-in-on-scroll">
+        <div class="about-content">
+            <h2>About the Book</h2>
+            <p>
+                25 gloriously absurd images across 5 themed chapters &mdash; <em>Rise & Grind</em>, <em>Corporate Canine</em>, <em>Beast Mode</em>, <em>Self-Care Sunday</em>, and <em>After Hours</em>. Every attitude is 100% authentic. No Bichon Frises were harmed. Several were, however, overdressed.
+            </p>
+            <div class="publisher">Father & Son Publishing &middot; Roseville, NSW</div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing fade-in-on-scroll">
+        <h2 class="section-title">Own Your Copy</h2>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h3>Premium Print Edition</h3>
+                <div class="price">AUD $25</div>
+                <div class="price-option">Softcover</div>
+                <div class="price">AUD $35</div>
+                <div class="price-option">Hardcover</div>
+                <div class="pricing-description">Museum-quality photo book, US Letter format, luxury matte paper.</div>
+                <a href="mailto:bichonsbook@gmail.com?subject=Order%20-%20Print%20Copy" class="cta-secondary">Order Print Copy</a>
+            </div>
+            <div class="pricing-card">
+                <h3>Digital Edition</h3>
+                <div class="price">USD $9.99</div>
+                <div class="pricing-description">Instant PDF download. Same premium layouts. Zero shipping.</div>
+                <a href="mailto:bichonsbook@gmail.com?subject=Order%20-%20Digital%20Copy" class="cta-secondary">Buy Digital</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Custom Edition Teaser -->
+    <section id="custom" class="custom-teaser fade-in-on-scroll">
+        <h2>Want YOUR Dog Living Their Best Life?</h2>
+        <p>
+            We create personalised editions featuring your dog — any breed. Send us a photo, or we'll come to you and take one. Your companion as a mountain explorer, corporate tycoon, or spa-day aficionado.
+        </p>
+        <div class="coming-soon">Custom Editions Now Available</div>
+        <a href="mailto:bichonsbook@gmail.com?subject=Custom%20Book%20Enquiry" class="cta-secondary">Get in Touch</a>
+    </section>
+
+    <!-- Volume 2 Teaser -->
+    <section id="volume2" class="volume-teaser fade-in-on-scroll">
+        <h2>Volume 2 is Here</h2>
+        <p>25 more images. More attitude. More fluff. Chapters include <em>Sky High</em>, <em>The Hustle</em>, <em>Full Send</em>, <em>Main Character Energy</em>, and <em>Off the Clock</em>.</p>
+        <a href="mailto:bichonsbook@gmail.com?subject=Order%20-%20Volume%202" class="cta-secondary">Order Volume 2</a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-publisher">Father & Son Publishing</div>
+            <div class="footer-email">
+                <a href="mailto:bichonsbook@gmail.com">bichonsbook@gmail.com</a>
+            </div>
+            <div class="social-icons">
+                <a href="#" class="social-icon" title="Instagram">IG</a>
+                <a href="#" class="social-icon" title="TikTok">TT</a>
+                <a href="#" class="social-icon" title="Facebook">FB</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function observeElements() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+            document.querySelectorAll('.fade-in-on-scroll').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href.startsWith('#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', observeElements);
+    </script>
+
+</body>
+</html>
