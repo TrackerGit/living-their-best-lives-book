@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UFC Scorecard — Simon vs Max</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  :root { --glass-bg: rgba(30,41,59,.55); --glass-border: rgba(148,163,184,.18); --accent: #f97316; --accent2: #3b82f6; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',system-ui,sans-serif; background:#0f172a; color:#e2e8f0; min-height:100vh;
+    background-image: radial-gradient(ellipse at 20% 0%,rgba(249,115,22,.12) 0%,transparent 50%),
+                       radial-gradient(ellipse at 80% 100%,rgba(59,130,246,.10) 0%,transparent 50%); }
+  .glass { background:var(--glass-bg); border:1px solid var(--glass-border); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border-radius:1rem; }
+  .glass-sm { background:rgba(30,41,59,.45); border:1px solid rgba(148,163,184,.12); backdrop-filter:blur(8px); border-radius:.5rem; }
+  select, input[type=text] { background:rgba(15,23,42,.7); border:1px solid rgba(148,163,184,.2); color:#e2e8f0; border-radius:.375rem; padding:.35rem .5rem; font-size:.8rem; font-family:inherit; transition:border-color .2s; }
+  select:focus, input[type=text]:focus { outline:none; border-color:var(--accent); }
+  select { cursor:pointer; appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right .4rem center; padding-right:1.4rem; }
+  .btn { padding:.5rem 1.25rem; border-radius:.5rem; font-weight:600; font-size:.85rem; cursor:pointer; border:none; transition:all .2s; font-family:inherit; }
+  .btn:active { transform:scale(.97); }
+  .btn-primary { background:linear-gradient(135deg,#f97316,#ea580c); color:#fff; }
+  .btn-primary:hover { background:linear-gradient(135deg,#fb923c,#f97316); box-shadow:0 0 20px rgba(249,115,22,.3); }
+  .btn-secondary { background:rgba(51,65,85,.6); color:#cbd5e1; border:1px solid rgba(148,163,184,.2); }
+  .btn-secondary:hover { background:rgba(71,85,105,.6); border-color:rgba(148,163,184,.35); }
+  .btn-danger { background:rgba(239,68,68,.15); color:#f87171; border:1px solid rgba(239,68,68,.25); }
+  .btn-danger:hover { background:rgba(239,68,68,.25); }
+  .btn-blue { background:linear-gradient(135deg,#3b82f6,#2563eb); color:#fff; }
+  .btn-blue:hover { box-shadow:0 0 20px rgba(59,130,246,.3); }
+  .fighter-name { background:transparent; border:1px solid transparent; color:#f1f5f9; font-weight:600; font-size:.85rem; padding:.25rem .4rem; border-radius:.375rem; min-width:120px; transition:all .2s; }
+  .fighter-name:hover { border-color:rgba(148,163,184,.3); background:rgba(15,23,42,.5); }
+  .fighter-name:focus { outline:none; border-color:var(--accent); background:rgba(15,23,42,.7); }
+  .score-cell { font-weight:700; font-size:.9rem; text-align:center; min-width:30px; }
+  .fight-row { transition:background .2s; }
+  .fight-row:hover { background:rgba(148,163,184,.06); }
+  .vs-badge { background:rgba(249,115,22,.15); color:#fb923c; font-weight:700; font-size:.65rem; padding:.15rem .4rem; border-radius:.25rem; letter-spacing:.05em; }
+  .leaderboard-score { font-size:3.5rem; font-weight:900; line-height:1; }
+  .simon-color { color:#f97316; }
+  .max-color { color:#3b82f6; }
+  .section-label { font-size:.65rem; font-weight:600; text-transform:uppercase; letter-spacing:.1em; color:#64748b; margin-bottom:.25rem; }
+  table { border-collapse:separate; border-spacing:0; }
+  th { font-size:.65rem; font-weight:600; text-transform:uppercase; letter-spacing:.08em; color:#64748b; padding:.6rem .5rem; border-bottom:1px solid rgba(148,163,184,.12); white-space:nowrap; }
+  td { padding:.5rem .5rem; border-bottom:1px solid rgba(148,163,184,.06); vertical-align:middle; }
+  .toast { position:fixed; bottom:1.5rem; right:1.5rem; padding:.75rem 1.25rem; border-radius:.75rem; font-size:.85rem; font-weight:500; z-index:100; opacity:0; transform:translateY(10px); transition:all .3s; pointer-events:none; }
+  .toast.show { opacity:1; transform:translateY(0); }
+  .toast-success { background:rgba(34,197,94,.15); color:#4ade80; border:1px solid rgba(34,197,94,.25); backdrop-filter:blur(8px); }
+  .toast-info { background:rgba(59,130,246,.15); color:#60a5fa; border:1px solid rgba(59,130,246,.25); backdrop-filter:blur(8px); }
+  .spinner { display:inline-block; width:1rem; height:1rem; border:2px solid rgba(255,255,255,.3); border-top-color:#fff; border-radius:50%; animation:spin .6s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  .fade-in { animation:fadeIn .3s ease-out; }
+  .crown { font-size:1.5rem; }
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:rgba(148,163,184,.2); border-radius:3px; }
+  .api-key-input { font-size:.75rem; }
+</style>
+</head>
+<body class="p-4 md:p-8">
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+<!-- Header -->
+<header class="text-center mb-6">
+  <h1 class="text-3xl md:text-4xl font-black tracking-tight">
+    <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">UFC</span>
+    <span class="text-slate-200"> SCORECARD</span>
+  </h1>
+  <p class="text-slate-500 text-sm mt-1 font-medium" id="eventSubtitle">Simon vs Max — Prediction Battle</p>
+</header>
+
+<!-- Leaderboard -->
+<div class="glass p-6 mb-6 max-w-2xl mx-auto fade-in">
+  <div class="flex items-center justify-center gap-8 md:gap-16">
+    <div class="text-center">
+      <div class="section-label simon-color">Simon (Dad)</div>
+      <div class="leaderboard-score simon-color" id="simonTotal">0</div>
+    </div>
+    <div class="flex flex-col items-center gap-1">
+      <div id="crownArea" class="crown" style="min-height:2rem;"></div>
+      <div class="vs-badge text-base px-3 py-1">VS</div>
+    </div>
+    <div class="text-center">
+      <div class="section-label max-color">Max</div>
+      <div class="leaderboard-score max-color" id="maxTotal">0</div>
+    </div>
+  </div>
+</div>
+
+<!-- Controls -->
+<div class="glass p-5 mb-6 max-w-5xl mx-auto fade-in">
+  <div class="flex flex-col gap-4">
+    <!-- API Key -->
+    <div class="flex flex-wrap items-center gap-2">
+      <label class="text-xs text-slate-500 font-medium whitespace-nowrap">Gemini API Key:</label>
+      <input type="password" id="apiKey" placeholder="Paste your Gemini API key…" class="api-key-input flex-1 min-w-[200px]" style="padding:.4rem .6rem;">
+      <button class="text-xs text-slate-500 hover:text-slate-300 cursor-pointer" onclick="toggleKeyVis()" id="toggleKeyBtn">Show</button>
+    </div>
+    <!-- Search + Load -->
+    <div class="flex flex-wrap items-center gap-2">
+      <input type="text" id="eventSearch" placeholder='e.g. "UFC 322" or "UFC Fight Night Jan 2026"' class="flex-1 min-w-[200px]" style="padding:.45rem .7rem; font-size:.85rem;">
+      <button class="btn btn-primary" onclick="loadFights()" id="loadBtn">Load Fights</button>
+    </div>
+    <!-- Manual Add + Actions -->
+    <div class="flex flex-wrap items-center gap-2">
+      <input type="text" id="manualFight" placeholder='Manual: "Fighter A vs Fighter B"' class="flex-1 min-w-[200px]" style="padding:.45rem .7rem; font-size:.85rem;">
+      <button class="btn btn-secondary" onclick="addManualFight()">Add Fight</button>
+      <div class="flex-1"></div>
+      <button class="btn btn-blue" onclick="calculateScores()">Calculate Scores</button>
+      <button class="btn btn-secondary" onclick="copyForNotes()">Copy for Apple Notes</button>
+      <button class="btn btn-danger" onclick="resetCard()">Reset Card</button>
+    </div>
+  </div>
+</div>
+
+<!-- Fights Table -->
+<div class="glass p-2 md:p-4 max-w-[1400px] mx-auto mb-8 fade-in overflow-x-auto">
+  <table class="w-full" id="fightsTable">
+    <thead>
+      <tr>
+        <th class="text-left pl-3">#</th>
+        <th class="text-left">Matchup</th>
+        <th colspan="3" class="text-center" style="color:#f97316;">Simon's Pick</th>
+        <th colspan="3" class="text-center" style="color:#3b82f6;">Max's Pick</th>
+        <th colspan="3" class="text-center" style="color:#22c55e;">Result</th>
+        <th class="text-center" style="color:#f97316;">S</th>
+        <th class="text-center" style="color:#3b82f6;">M</th>
+        <th class="text-center"></th>
+      </tr>
+      <tr>
+        <th></th>
+        <th></th>
+        <th class="text-center">Winner</th><th class="text-center">Method</th><th class="text-center">Round</th>
+        <th class="text-center">Winner</th><th class="text-center">Method</th><th class="text-center">Round</th>
+        <th class="text-center">Winner</th><th class="text-center">Method</th><th class="text-center">Round</th>
+        <th></th><th></th><th></th>
+      </tr>
+    </thead>
+    <tbody id="fightsBody"></tbody>
+  </table>
+  <div id="emptyState" class="text-center py-12 text-slate-500">
+    <p class="text-lg font-semibold mb-1">No fights loaded</p>
+    <p class="text-sm">Search for an event above or add fights manually.</p>
+  </div>
+</div>
+
+<footer class="text-center text-slate-600 text-xs pb-6">UFC Scorecard &copy; 2026 — Simon & Max</footer>
+
+<script>
+const METHODS = ['', 'KO/TKO', 'Submission', 'Decision'];
+const ROUNDS = ['', '1', '2', '3', '4', '5'];
+const STORAGE_KEY = 'ufc-scorecard-v2';
+
+let fights = []; // [{id, fighterA, fighterB, simon:{winner,method,round}, max:{winner,method,round}, result:{winner,method,round}, simonScore, maxScore}]
+
+// ─── Persistence ───
+function save() {
+  const data = {
+    fights,
+    apiKey: document.getElementById('apiKey').value,
+    eventSearch: document.getElementById('eventSearch').value
+  };
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data.fights) fights = data.fights;
+    if (data.apiKey) document.getElementById('apiKey').value = data.apiKey;
+    if (data.eventSearch) document.getElementById('eventSearch').value = data.eventSearch;
+  } catch(e) {}
+}
+
+// ─── Toast ───
+let toastTimer;
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast toast-${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── API Key Toggle ───
+function toggleKeyVis() {
+  const inp = document.getElementById('apiKey');
+  const btn = document.getElementById('toggleKeyBtn');
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'Hide'; }
+  else { inp.type = 'password'; btn.textContent = 'Show'; }
+}
+
+// ─── Load Fights via Gemini ───
+async function loadFights() {
+  const apiKey = document.getElementById('apiKey').value.trim();
+  if (!apiKey) { showToast('Please enter your Gemini API key.', 'info'); return; }
+  const query = document.getElementById('eventSearch').value.trim();
+  if (!query) { showToast('Please enter an event to search for.', 'info'); return; }
+
+  const btn = document.getElementById('loadBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Loading…';
+
+  try {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+    const body = {
+      contents: [{ parts: [{ text: `List only the main card fights for "${query}". Return ONLY a plain text list with one fight per line in the format "Fighter A vs Fighter B". No numbering, no titles, no extra text. Just the fighter matchups, one per line.` }] }],
+      tools: [{ "google_search": {} }]
+    };
+    const resp = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!resp.ok) { const e = await resp.text(); throw new Error(`API error ${resp.status}: ${e}`); }
+    const data = await resp.json();
+
+    // Extract text from response
+    let text = '';
+    if (data.candidates && data.candidates[0]) {
+      const parts = data.candidates[0].content?.parts || [];
+      for (const p of parts) { if (p.text) text += p.text + '\n'; }
+    }
+    if (!text.trim()) throw new Error('No fight data returned from API.');
+
+    // Parse fights
+    const lines = text.split('\n').map(l => l.replace(/^\d+[\.\)\-]\s*/, '').replace(/^\*+/, '').replace(/\*+$/, '').trim()).filter(l => l.toLowerCase().includes(' vs'));
+    if (lines.length === 0) throw new Error('Could not parse any fights from the response.');
+
+    for (const line of lines) {
+      const sep = / vs\.? /i;
+      const m = line.split(sep);
+      if (m.length >= 2) {
+        const a = m[0].replace(/[\*\-\#]/g, '').trim();
+        const b = m.slice(1).join(' vs ').replace(/[\*\-\#]/g, '').replace(/\(.*?\)/g, '').trim();
+        if (a && b) addFight(a, b);
+      }
+    }
+    renderTable();
+    save();
+    showToast(`Loaded ${lines.length} fights for ${query}`);
+  } catch(e) {
+    showToast(e.message, 'info');
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Load Fights';
+  }
+}
+
+// ─── Add Fight ───
+function addFight(a, b) {
+  fights.push({
+    id: Date.now() + Math.random(),
+    fighterA: a, fighterB: b,
+    simon: { winner: '', method: '', round: '' },
+    max: { winner: '', method: '', round: '' },
+    result: { winner: '', method: '', round: '' },
+    simonScore: null, maxScore: null
+  });
+}
+
+function addManualFight() {
+  const inp = document.getElementById('manualFight');
+  const val = inp.value.trim();
+  if (!val) return;
+  const sep = / vs\.? /i;
+  const parts = val.split(sep);
+  if (parts.length >= 2) {
+    addFight(parts[0].trim(), parts.slice(1).join(' vs ').trim());
+  } else {
+    addFight(val, 'TBD');
+  }
+  inp.value = '';
+  renderTable();
+  save();
+  showToast('Fight added');
+}
+
+// ─── Build Select ───
+function sel(options, value, onChange, extraClass='') {
+  const s = document.createElement('select');
+  s.className = extraClass;
+  for (const o of options) {
+    const opt = document.createElement('option');
+    opt.value = o; opt.textContent = o || '—';
+    if (o === value) opt.selected = true;
+    s.appendChild(opt);
+  }
+  s.addEventListener('change', () => { onChange(s.value); save(); });
+  return s;
+}
+
+// ─── Render Table ───
+function renderTable() {
+  const tbody = document.getElementById('fightsBody');
+  tbody.innerHTML = '';
+  document.getElementById('emptyState').style.display = fights.length ? 'none' : 'block';
+
+  fights.forEach((f, i) => {
+    const tr = document.createElement('tr');
+    tr.className = 'fight-row fade-in';
+
+    // #
+    const tdNum = document.createElement('td');
+    tdNum.className = 'text-slate-500 font-mono text-sm pl-3';
+    tdNum.textContent = i + 1;
+    tr.appendChild(tdNum);
+
+    // Matchup
+    const tdMatch = document.createElement('td');
+    tdMatch.className = 'whitespace-nowrap';
+    const nameA = document.createElement('input');
+    nameA.type = 'text'; nameA.value = f.fighterA; nameA.className = 'fighter-name';
+    nameA.addEventListener('input', () => { f.fighterA = nameA.value; updateWinnerDropdowns(tr, f); save(); });
+    const vsSpan = document.createElement('span');
+    vsSpan.className = 'vs-badge mx-2'; vsSpan.textContent = 'VS';
+    const nameB = document.createElement('input');
+    nameB.type = 'text'; nameB.value = f.fighterB; nameB.className = 'fighter-name';
+    nameB.addEventListener('input', () => { f.fighterB = nameB.value; updateWinnerDropdowns(tr, f); save(); });
+    tdMatch.append(nameA, vsSpan, nameB);
+    tr.appendChild(tdMatch);
+
+    const winners = ['', f.fighterA, f.fighterB];
+
+    // Simon picks
+    const tdSW = document.createElement('td');
+    tdSW.appendChild(sel(winners, f.simon.winner, v => f.simon.winner = v, 'simon-winner'));
+    tr.appendChild(tdSW);
+    const tdSM = document.createElement('td');
+    tdSM.appendChild(sel(METHODS, f.simon.method, v => f.simon.method = v));
+    tr.appendChild(tdSM);
+    const tdSR = document.createElement('td');
+    tdSR.appendChild(sel(ROUNDS, f.simon.round, v => f.simon.round = v));
+    tr.appendChild(tdSR);
+
+    // Max picks
+    const tdMW = document.createElement('td');
+    tdMW.appendChild(sel(winners, f.max.winner, v => f.max.winner = v, 'max-winner'));
+    tr.appendChild(tdMW);
+    const tdMM = document.createElement('td');
+    tdMM.appendChild(sel(METHODS, f.max.method, v => f.max.method = v));
+    tr.appendChild(tdMM);
+    const tdMR = document.createElement('td');
+    tdMR.appendChild(sel(ROUNDS, f.max.round, v => f.max.round = v));
+    tr.appendChild(tdMR);
+
+    // Result
+    const tdRW = document.createElement('td');
+    tdRW.appendChild(sel(winners, f.result.winner, v => f.result.winner = v, 'result-winner'));
+    tr.appendChild(tdRW);
+    const tdRM = document.createElement('td');
+    tdRM.appendChild(sel(METHODS, f.result.method, v => f.result.method = v));
+    tr.appendChild(tdRM);
+    const tdRR = document.createElement('td');
+    tdRR.appendChild(sel(ROUNDS, f.result.round, v => f.result.round = v));
+    tr.appendChild(tdRR);
+
+    // Scores
+    const tdSS = document.createElement('td');
+    tdSS.className = 'score-cell simon-color';
+    tdSS.textContent = f.simonScore !== null ? f.simonScore : '—';
+    tr.appendChild(tdSS);
+    const tdMS = document.createElement('td');
+    tdMS.className = 'score-cell max-color';
+    tdMS.textContent = f.maxScore !== null ? f.maxScore : '—';
+    tr.appendChild(tdMS);
+
+    // Delete
+    const tdDel = document.createElement('td');
+    const delBtn = document.createElement('button');
+    delBtn.textContent = '✕';
+    delBtn.className = 'text-slate-600 hover:text-red-400 cursor-pointer text-sm font-bold transition-colors';
+    delBtn.title = 'Remove fight';
+    delBtn.addEventListener('click', () => { fights.splice(i, 1); renderTable(); save(); });
+    tdDel.appendChild(delBtn);
+    tr.appendChild(tdDel);
+
+    tbody.appendChild(tr);
+  });
+}
+
+function updateWinnerDropdowns(tr, fight) {
+  const winners = ['', fight.fighterA, fight.fighterB];
+  tr.querySelectorAll('select.simon-winner, select.max-winner, select.result-winner').forEach(s => {
+    const cur = s.value;
+    s.innerHTML = '';
+    for (const o of winners) {
+      const opt = document.createElement('option');
+      opt.value = o; opt.textContent = o || '—';
+      if (o === cur) opt.selected = true;
+      s.appendChild(opt);
+    }
+  });
+}
+
+// ─── Scoring ───
+function calculateScores() {
+  let simonTot = 0, maxTot = 0;
+  let hasResults = false;
+  for (const f of fights) {
+    if (!f.result.winner) { f.simonScore = null; f.maxScore = null; continue; }
+    hasResults = true;
+    let ss = 0, ms = 0;
+    if (f.simon.winner && f.simon.winner === f.result.winner) {
+      ss++;
+      if (f.simon.method && f.simon.method === f.result.method) ss++;
+      if (f.simon.round && f.simon.round === f.result.round) ss++;
+    }
+    if (f.max.winner && f.max.winner === f.result.winner) {
+      ms++;
+      if (f.max.method && f.max.method === f.result.method) ms++;
+      if (f.max.round && f.max.round === f.result.round) ms++;
+    }
+    f.simonScore = ss; f.maxScore = ms;
+    simonTot += ss; maxTot += ms;
+  }
+
+  if (!hasResults) { showToast('Enter at least one result first.', 'info'); return; }
+
+  document.getElementById('simonTotal').textContent = simonTot;
+  document.getElementById('maxTotal').textContent = maxTot;
+
+  const crown = document.getElementById('crownArea');
+  if (simonTot > maxTot) crown.textContent = '👈 👑';
+  else if (maxTot > simonTot) crown.textContent = '👑 👉';
+  else crown.textContent = '🤝';
+
+  renderTable();
+  save();
+  showToast(`Scores calculated! Simon ${simonTot} — Max ${maxTot}`);
+}
+
+// ─── Copy for Apple Notes ───
+function copyForNotes() {
+  const event = document.getElementById('eventSearch').value.trim() || 'UFC Event';
+  let txt = `🥊 ${event.toUpperCase()} — SCORECARD\n`;
+  txt += `${'─'.repeat(40)}\n\n`;
+
+  for (let i = 0; i < fights.length; i++) {
+    const f = fights[i];
+    txt += `${i + 1}. ${f.fighterA} vs ${f.fighterB}\n`;
+    if (f.simon.winner) txt += `   Simon: ${f.simon.winner} by ${f.simon.method || '?'} Rd ${f.simon.round || '?'}${f.simonScore !== null ? ` [${f.simonScore}pt]` : ''}\n`;
+    if (f.max.winner) txt += `   Max:   ${f.max.winner} by ${f.max.method || '?'} Rd ${f.max.round || '?'}${f.maxScore !== null ? ` [${f.maxScore}pt]` : ''}\n`;
+    if (f.result.winner) txt += `   Result: ${f.result.winner} by ${f.result.method || '?'} Rd ${f.result.round || '?'}\n`;
+    txt += '\n';
+  }
+
+  const st = parseInt(document.getElementById('simonTotal').textContent) || 0;
+  const mt = parseInt(document.getElementById('maxTotal').textContent) || 0;
+  txt += `${'─'.repeat(40)}\n`;
+  txt += `TOTAL  →  Simon: ${st}  |  Max: ${mt}\n`;
+  if (st > mt) txt += `🏆 Simon wins!\n`;
+  else if (mt > st) txt += `🏆 Max wins!\n`;
+  else if (st > 0) txt += `🤝 It's a tie!\n`;
+
+  navigator.clipboard.writeText(txt).then(() => showToast('Copied to clipboard!'));
+}
+
+// ─── Reset ───
+function resetCard() {
+  if (!confirm('Clear all fights and start a fresh card?')) return;
+  fights = [];
+  document.getElementById('simonTotal').textContent = '0';
+  document.getElementById('maxTotal').textContent = '0';
+  document.getElementById('crownArea').textContent = '';
+  document.getElementById('eventSearch').value = '';
+  renderTable();
+  save();
+  showToast('Card reset');
+}
+
+// ─── Auto-save on API key change ───
+document.getElementById('apiKey').addEventListener('input', save);
+document.getElementById('eventSearch').addEventListener('input', save);
+
+// ─── Enter key support ───
+document.getElementById('eventSearch').addEventListener('keydown', e => { if (e.key === 'Enter') loadFights(); });
+document.getElementById('manualFight').addEventListener('keydown', e => { if (e.key === 'Enter') addManualFight(); });
+
+// ─── Init ───
+load();
+renderTable();
+</script>
+</body>
+</html>
